@@ -8,7 +8,6 @@ from tkinter import filedialog
 from tkinter import messagebox  # Importar el módulo messagebox
 from selenium.webdriver.firefox.options import Options
 from tkinter import ttk
-from ttkthemes import ThemedStyle  # Importar el módulo ThemedStyle
 import threading
 from selenium.webdriver.common.by import By  # Importa la clase By
 import beltzscrap as bs
@@ -21,12 +20,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from openpyxl import Workbook
 from selenium.webdriver.firefox.options import Options
 from concurrent.futures import ThreadPoolExecutor
+
+
 global progress
 progress=0
 def get_product(url,workbook,total):
     options = webdriver.ChromeOptions()
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+   # options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
@@ -37,96 +38,98 @@ def get_product(url,workbook,total):
 
     time.sleep(5)
     iframes=driver.find_elements(By.TAG_NAME,'iFrame')
-
-    iframe = driver.find_element(By.ID, "sp_message_iframe_818331")
-    driver.switch_to.frame(iframe)
-
-    # Encuentra y hace clic en el botón dentro del iframe
-    button=driver.find_element(By.CLASS_NAME,'btn-accept-all')
-    button.click()
-
-    # Cuando hayas terminado de interactuar con el iframe, asegúrate de volver al contexto principal
-    driver.switch_to.default_content()
-    time.sleep(1)
-    try:
-        button=driver.find_element(By.CLASS_NAME,'productOffers-listLoadMore')
-        button.click()
-    except:
-        pass
-    time.sleep(1)
-    try:
-        button=driver.find_element(By.CLASS_NAME,'productOffers-listLoadMore')
-        button.click()
-    except:
-        pass
-    time.sleep(1)
-    try:
-        html=driver.page_source
-
-        soup=BeautifulSoup(html,'html.parser')
-        # Obtener el nombre de la tienda
-        sellers = soup.find_all('a', class_='productOffers-listItemOfferShopV2LogoLink')
-        driver.quit()
-        global progress
-        progress+=1
-        progress_label.config(text=f'{progress}/{total}')
-        with open('./checked_products.txt','a') as f:
-            f.write(f'{url}\n')
-            f.close()
-        cheapest=[sellers[0]['data-shop-name'].replace(' ','').replace('\n',''),float(sellers[0]['data-gtm-payload'].split('"product_price": "')[1].split('"')[0]),sellers[0]['href']]
-        if cheapest[0]=='eBay':
-            print('eBay')
-            return
-        if 'amazon' in cheapest[0].lower():
-            print('Amazon is the cheapest')
-            return
-        amz=[]
-        for seller in sellers:
-            name=seller['data-shop-name']
-            price=float(seller['data-gtm-payload'].split('"product_price": "')[1].split('"')[0])
-            if 'amazon' in name.lower():
-                porcentaje_min=float(min_percent_benefit_entry.get())
-                beneficio_min=float(min_euro_benefit_entry.get())
-                if float(cheapest[1])*porcentaje_min<price and price-cheapest[1]>beneficio_min:
-                    amz.append(name)
-                    amz.append(price)
-                    amz.append(seller['href']) #Aqui esta el problema, la url no es la url real de amazon sino lo que te he mostrado en el ejemplo
-                else:
-                    info_label.config(text=f'Not enough profit')
-                    return
-                break
-        if not len(amz)!=0:
-            print('Amazon not found')
-            info_label.config(text=f'Amazon not found')
-            return
-        porcentaje=(amz[1]-cheapest[1])/cheapest[1]*100
-        beneficio=amz[1]-cheapest[1]
-        product_name=soup.find('h1',class_='oopStage-title').find('span').text
-        """
-        Descartado para aumentar la eficiencia
-        xpath=f'//img[contains(@alt, "{amz[0]}") and contains(@class, "productOffers-listItemOfferShopV2LogoImage")]'
-        imagen = driver.find_element(By.XPATH,xpath)
-        imagen.click()
-        """
-        #Data: Name, Cheapest Price, Amazon Price, Profit %, Profit €, Cheap Seller URL, Amz URL
-        print(product_name)
-        info_label.config(text=f'Saved {product_name}')
-        data=[product_name, cheapest[1], amz[1], porcentaje, beneficio, url]
-        # Crear un libro de trabajo y una hoja de trabajo
+    for iframe in iframes:
         try:
-            sheet = workbook.active
-            sheet.append(data)
+            driver.switch_to.frame(iframe)
+            
+            # Encuentra y hace clic en el botón dentro del iframe
+            button=driver.find_element(By.CLASS_NAME,'btn-accept-all')
+            button.click()
+            
+            # Cuando hayas terminado de interactuar con el iframe, asegúrate de volver al contexto principal
+            driver.switch_to.default_content()
+            time.sleep(1)
+            try:
+                button=driver.find_element(By.CLASS_NAME,'productOffers-listLoadMore')
+                button.click()
+            except:
+                pass
+            time.sleep(1)
+            try:
+                button=driver.find_element(By.CLASS_NAME,'productOffers-listLoadMore')
+                button.click()
+            except:
+                pass
+            time.sleep(1)
+            try:
+                html=driver.page_source
 
-            # Especifica el nombre del archivo de Excel en el que deseas guardar los datos
-            nombre_archivo = "./products.xlsx"
+                soup=BeautifulSoup(html,'html.parser')
+                # Obtener el nombre de la tienda
+                sellers = soup.find_all('a', class_='productOffers-listItemOfferShopV2LogoLink')
+                driver.quit()
+                global progress
+                progress+=1
+                progress_label.config(text=f'{progress}/{total}')
+                with open('./checked_products.txt','a') as f:
+                    f.write(f'{url}\n')
+                    f.close()
+                cheapest=[sellers[0]['data-shop-name'].replace(' ','').replace('\n',''),float(sellers[0]['data-gtm-payload'].split('"product_price": "')[1].split('"')[0]),sellers[0]['href']]
+                if cheapest[0]=='eBay':
+                    print('eBay')
+                    return
+                if 'amazon' in cheapest[0].lower():
+                    print('Amazon is the cheapest')
+                    return
+                amz=[]
+                for seller in sellers:
+                    name=seller['data-shop-name']
+                    price=float(seller['data-gtm-payload'].split('"product_price": "')[1].split('"')[0])
+                    if 'amazon' in name.lower():
+                        porcentaje_min=float(min_percent_benefit_entry.get())
+                        beneficio_min=float(min_euro_benefit_entry.get())
+                        if float(cheapest[1])*porcentaje_min<price and price-cheapest[1]>beneficio_min:
+                            amz.append(name)
+                            amz.append(price)
+                            amz.append(seller['href']) #Aqui esta el problema, la url no es la url real de amazon sino lo que te he mostrado en el ejemplo
+                        else:
+                            info_label.config(text=f'Not enough profit')
+                            return
+                        break
+                if not len(amz)!=0:
+                    print('Amazon not found')
+                    info_label.config(text=f'Amazon not found')
+                    return
+                porcentaje=(amz[1]-cheapest[1])/cheapest[1]*100
+                beneficio=amz[1]-cheapest[1]
+                product_name=soup.find('h1',class_='oopStage-title').find('span').text
+                """
+                Descartado para aumentar la eficiencia
+                xpath=f'//img[contains(@alt, "{amz[0]}") and contains(@class, "productOffers-listItemOfferShopV2LogoImage")]'
+                imagen = driver.find_element(By.XPATH,xpath)
+                imagen.click()
+                """
+                #Data: Name, Cheapest Price, Amazon Price, Profit %, Profit €, Cheap Seller URL, Amz URL
+                print(product_name)
+                info_label.config(text=f'Saved {product_name}')
+                data=[product_name, cheapest[1], amz[1], porcentaje, beneficio, url]
+                # Crear un libro de trabajo y una hoja de trabajo
+                try:
+                    sheet = workbook.active
+                    sheet.append(data)
 
-            # Guardar el libro de trabajo en el archivo de Excel
-            workbook.save(nombre_archivo)
-        except Exception as e:
-            print(f'Error al guardar el archivo: {str(e)}')
-    except Exception as e:
-        # Captura cualquier excepción que pueda ocurrir durante la espera o el clic
-        print(f"Error: {e}")
+                    # Especifica el nombre del archivo de Excel en el que deseas guardar los datos
+                    nombre_archivo = "./products.xlsx"
+
+                    # Guardar el libro de trabajo en el archivo de Excel
+                    workbook.save(nombre_archivo)
+                except Exception as e:
+                    print(f'Error al guardar el archivo: {str(e)}')
+            except Exception as e:
+                # Captura cualquier excepción que pueda ocurrir durante la espera o el clic
+                print(f"Error: {e}")
+        except:
+            print("iframe incorrecto")
 
 def start_scraping():
     start_button.config(state='disabled')

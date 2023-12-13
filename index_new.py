@@ -8,7 +8,6 @@ from tkinter import filedialog
 from tkinter import messagebox  # Importar el módulo messagebox
 from selenium.webdriver.firefox.options import Options
 from tkinter import ttk
-from ttkthemes import ThemedStyle  # Importar el módulo ThemedStyle
 import threading
 from selenium.webdriver.common.by import By  # Importa la clase By
 # Configura el controlador de Selenium (asegúrate de tener el controlador adecuado instalado)
