@@ -1,4 +1,5 @@
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/6dca3253-0e96-4032-821c-b20545e84ed2/27f12c53-a847-44c0-afe3-76d34ca4d73a/Untitled.png)
+![image](https://github.com/iBeltz-py/Idealo/assets/129123101/fc3a2892-c187-4f9e-9aa4-5bc6030fd51e)
+
 
 # Descripción
 
