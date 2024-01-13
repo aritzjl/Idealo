@@ -1,16 +1,32 @@
 ![image](https://github.com/iBeltz-py/Idealo/assets/129123101/fc3a2892-c187-4f9e-9aa4-5bc6030fd51e)
 
 
-# Descripción
+# Description
 
-## Descripción General
+## General Description
 
-Este proyecto es una herramienta avanzada diseñada específicamente para traders de Amazon que desean optimizar su proceso de búsqueda y comparación de productos en la plataforma. La herramienta utiliza técnicas de web scraping para recopilar información detallada de productos en Idealo, una plataforma de referencia para encontrar ofertas y precios competitivos en múltiples productos.
+This project is an advanced tool specifically designed for Amazon traders aiming to optimize their process of searching and comparing products on the platform. The tool employs web scraping techniques to gather detailed product information from Idealo, a reference platform for finding deals and competitive prices on various products.
 
-## **Interfaz Gráfica para Recopilación de URLs**:
+## **Graphical Interface for URL Collection**:
 
-Ofrece una interfaz gráfica intuitiva que permite al usuario recopilar URLs de productos desde Idealo. Esto se realiza mediante la selección de la cantidad de "workers", lo que agiliza el proceso de obtención de enlaces y maximiza la eficiencia del scraping.
+It provides an intuitive graphical interface that enables users to collect product URLs from Idealo. This is accomplished by selecting the number of "workers," streamlining the link retrieval process, and maximizing the efficiency of scraping.
 
-## **Extractor de Productos**:
+## **Product Extractor**:
 
-El extractor de productos es la parte central de la herramienta. Una vez recopiladas las URLs de los productos desde Idealo, utiliza técnicas avanzadas de scraping (Selenium y BeautifulSoup) para comparar los precios y detalles de los productos en Amazon. Los usuarios pueden configurar filtros específicos, como un porcentaje mínimo de beneficio y un valor mínimo en euros de beneficio. El extractor filtra los productos que cumplen con estos criterios y almacena los detalles relevantes, como nombre del producto, precios, porcentaje de beneficio y enlaces, en un archivo Excel. Esta función permite a los traders identificar de manera eficiente y organizada los productos que podrían ofrecer oportunidades de negocios más rentables en Amazon
+The product extractor is the central part of the tool. Once the product URLs are collected from Idealo, it uses advanced scraping techniques (Selenium and BeautifulSoup) to compare prices and details of products on Amazon. Users can configure specific filters, such as a minimum profit percentage and a minimum euro profit value. The extractor filters products that meet these criteria and stores relevant details, such as product name, prices, profit percentage, and links, in an Excel file. This function enables traders to identify efficiently and organizedly products that could offer more profitable business opportunities on Amazon.
+
+# Running the Program
+
+1. **Create a virtual environment:**
+    - Linux/Mac: **`python3 -m venv venv`**
+    - Windows: **`python -m venv venv`**
+2. **Activate the virtual environment:**
+    - Linux/Mac: **`source venv/bin/activate`**
+    - Windows: **`venv\Scripts\activate`**
+3. **Install the libraries:**
+    - Run **`pip install -r requirements.txt`**
+4. **Execute `index.py` to update the list of URLs with all products (`products.txt`):**
+    - **`python index.py`**
+5. **Once the list of products is obtained, run `get_products.py` to start analyzing all products:**
+    - **`python get_products.py`**
+6. **Let the magic happen; you can observe the Excel file `products.xlsx` updating in real-time.**
